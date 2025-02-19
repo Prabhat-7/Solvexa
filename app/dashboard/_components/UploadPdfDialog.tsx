@@ -19,11 +19,7 @@ import { useAction, useMutation } from "convex/react";
 import { Loader2Icon } from "lucide-react";
 import { useUser } from "@clerk/nextjs";
 
-export default function UploadPdfDialog({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function UploadPdfDialog() {
   const generateUploadUrl = useMutation(api.fileUpload.generateUploadUrl);
   const [file, setFile] = useState<File | null>();
   const [fileName, setFileName] = useState<string>("");
@@ -32,6 +28,7 @@ export default function UploadPdfDialog({
   const AddFileEntry = useMutation(api.fileUpload.AddFileEntryToDb);
   const getFileUrl = useMutation(api.fileUpload.getFileUrl);
   const [isLoading, setLoading] = useState<boolean>(false);
+  const [isOpen, setOpen] = useState<boolean>(false);
   const OnFileSelect = (e: ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
       setFile(e.target.files[0]);
@@ -63,16 +60,22 @@ export default function UploadPdfDialog({
     //API call to fetch PDF processed data
     const ApiResponse = await axios.get("/api/pdf-loader?pdfUrl=" + fileUrl);
 
-    const embeddedResult = embeddDocuments({
+    await embeddDocuments({
       chunks: ApiResponse.data.result,
       fileId: fileId,
     });
-    console.log(embeddedResult);
+    console.log("embedded");
     setLoading(false);
+    setOpen(false);
   };
   return (
-    <Dialog>
-      <DialogTrigger asChild>{children}</DialogTrigger>
+    <Dialog open={isOpen}>
+      <DialogTrigger asChild>
+        <Button onClick={() => setOpen(true)} className="w-full">
+          {" "}
+          +Upload File
+        </Button>
+      </DialogTrigger>
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Upload PDF File</DialogTitle>
@@ -84,13 +87,15 @@ export default function UploadPdfDialog({
                   type="file"
                   accept="application/pdf"
                   onChange={(e) => OnFileSelect(e)}
+                  required
                 />
               </div>
               <div className="mt-2 ">
-                <label>File Name *</label>
+                <label>File Name*</label>
                 <Input
                   placeholder="File Name"
                   onChange={(e) => setFileName(e.target.value)}
+                  required
                 />
               </div>
             </div>
@@ -102,11 +107,15 @@ export default function UploadPdfDialog({
               type="button"
               variant="secondary"
               className="border border-black/30"
+              onClick={() => setOpen(false)}
             >
               Close
             </Button>
           </DialogClose>
-          <Button onClick={OnUpload}>
+          <Button
+            onClick={OnUpload}
+            disabled={isLoading || !file || !fileName.trim()}
+          >
             {isLoading ? <Loader2Icon className="animate-spin" /> : "Upload"}
           </Button>
         </DialogFooter>

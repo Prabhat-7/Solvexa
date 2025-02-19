@@ -16,9 +16,7 @@ export default function SideBar() {
         className="ml-4"
       ></Image>
       <div className="mt-10 p-3">
-        <UploadPdfDialog>
-          <Button className="w-full">+ Upload PDF</Button>
-        </UploadPdfDialog>
+        <UploadPdfDialog />
         <div className="flex gap-2 items-center p-5 mt-5 hover:bg-slate-100 cursor-pointer rounded-md">
           <Layout />
           <h2>Workspace</h2>
