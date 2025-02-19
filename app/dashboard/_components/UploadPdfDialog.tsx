@@ -1,4 +1,5 @@
 "use client";
+import axios from "axios";
 import {
   Dialog,
   DialogContent,
@@ -14,7 +15,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { api } from "@/convex/_generated/api";
 import React, { ChangeEvent, use, useState } from "react";
-import { useMutation } from "convex/react";
+import { useAction, useMutation } from "convex/react";
 import { Loader2Icon } from "lucide-react";
 import { useUser } from "@clerk/nextjs";
 
@@ -27,6 +28,7 @@ export default function UploadPdfDialog({
   const [file, setFile] = useState<File | null>();
   const [fileName, setFileName] = useState<string>("");
   const { user } = useUser();
+  const embeddDocuments = useAction(api.Action.ingest);
   const AddFileEntry = useMutation(api.fileUpload.AddFileEntryToDb);
   const getFileUrl = useMutation(api.fileUpload.getFileUrl);
   const [isLoading, setLoading] = useState<boolean>(false);
@@ -58,6 +60,15 @@ export default function UploadPdfDialog({
       createdBy: user?.primaryEmailAddress?.emailAddress ?? "",
     });
     console.log(response);
+    //API call to fetch PDF processed data
+    const ApiResponse = await axios.get("/api/pdf-loader");
+    console.log(ApiResponse.data.result);
+
+    const embeddedResult = embeddDocuments({
+      chunks: ApiResponse.data.result,
+      fileId: fileId,
+    });
+    console.log(embeddedResult);
     setLoading(false);
   };
   return (
