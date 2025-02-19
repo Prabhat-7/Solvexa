@@ -2,11 +2,13 @@ import { NextResponse } from "next/server";
 import { WebPDFLoader } from "@langchain/community/document_loaders/web/pdf";
 import { RecursiveCharacterTextSplitter } from "@langchain/textsplitters";
 
-const PdfUrl =
-  "https://mellow-gopher-714.convex.cloud/api/storage/d53c6e58-6900-441f-addf-36c53c0b69f1";
 export async function GET(request: Request) {
+  const reqUrl = request.url;
+  const { searchParams } = new URL(reqUrl);
+  const pdfUrl = searchParams.get("pdfUrl");
+
   //LOAD THE PDF FILE
-  const response = await fetch(PdfUrl);
+  const response = await fetch(pdfUrl!);
 
   const data = await response.blob();
   const loader = new WebPDFLoader(data);

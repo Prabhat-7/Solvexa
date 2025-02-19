@@ -61,8 +61,7 @@ export default function UploadPdfDialog({
     });
     console.log(response);
     //API call to fetch PDF processed data
-    const ApiResponse = await axios.get("/api/pdf-loader");
-    console.log(ApiResponse.data.result);
+    const ApiResponse = await axios.get("/api/pdf-loader?pdfUrl=" + fileUrl);
 
     const embeddedResult = embeddDocuments({
       chunks: ApiResponse.data.result,
