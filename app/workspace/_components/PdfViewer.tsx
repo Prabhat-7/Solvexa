@@ -7,8 +7,8 @@ pdfjs.GlobalWorkerOptions.workerSrc = new URL(
 
 import React, { useState, useEffect, useRef } from "react";
 import { Document, Page } from "react-pdf";
-import 'react-pdf/dist/Page/TextLayer.css';
-import 'react-pdf/dist/Page/AnnotationLayer.css';
+import "react-pdf/dist/Page/TextLayer.css";
+import "react-pdf/dist/Page/AnnotationLayer.css";
 
 function PdfViewer({ fileUrl }: { fileUrl: string }) {
   const [numPages, setNumPages] = useState<number>();
@@ -29,10 +29,10 @@ function PdfViewer({ fileUrl }: { fileUrl: string }) {
     };
 
     updateContainerWidth();
-    window.addEventListener('resize', updateContainerWidth);
+    window.addEventListener("resize", updateContainerWidth);
 
     return () => {
-      window.removeEventListener('resize', updateContainerWidth);
+      window.removeEventListener("resize", updateContainerWidth);
     };
   }, []);
 
@@ -52,18 +52,20 @@ function PdfViewer({ fileUrl }: { fileUrl: string }) {
     <div className="flex flex-col items-center" ref={containerRef}>
       {/* Simple navigation controls */}
       <div className="w-full flex justify-between mb-4">
-        <button 
-          onClick={goToPrevPage} 
+        <button
+          onClick={goToPrevPage}
           disabled={currentPage <= 1}
           className="px-3 py-2 bg-gray-200 rounded disabled:opacity-50"
         >
           Previous
         </button>
-        
-        <span>Page {currentPage} of {numPages || '--'}</span>
-        
-        <button 
-          onClick={goToNextPage} 
+
+        <span>
+          Page {currentPage} of {numPages || "--"}
+        </span>
+
+        <button
+          onClick={goToNextPage}
           disabled={currentPage >= numPages!}
           className="px-3 py-2 bg-gray-200 rounded disabled:opacity-50"
         >
@@ -72,7 +74,7 @@ function PdfViewer({ fileUrl }: { fileUrl: string }) {
       </div>
 
       {/* Document viewer */}
-      <div className="w-fullshadow-lg border border-gray-200 rounded-lg max-h-[80vh] overflow-auto ">
+      <div className="w-fullshadow-lg  border-t-2 border-b-2 max-h-[75vh] overflow-auto ">
         <Document
           file={fileUrl}
           onLoadSuccess={onDocumentLoadSuccess}
@@ -81,9 +83,9 @@ function PdfViewer({ fileUrl }: { fileUrl: string }) {
           }
         >
           {numPages ? (
-            <Page 
+            <Page
               pageNumber={currentPage}
-              width={containerWidth} 
+              width={containerWidth}
               renderTextLayer={false}
               renderAnnotationLayer={false}
             />
