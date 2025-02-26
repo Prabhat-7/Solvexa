@@ -1,4 +1,5 @@
 "use client";
+import { chatSession } from "@/configs/AiModel";
 import { api } from "@/convex/_generated/api";
 import { useAction } from "convex/react";
 import {
@@ -74,6 +75,13 @@ function EditorExtensions({ editor }: { editor: any }) {
       context += item["pageContent"] + "\n";
     });
     console.log(context);
+    const prompt = `For the question: ${selectedText}\n Provide me an appropriate
+     answer in HTML format(Put everything inside the body tag but dont include it
+      . Like this  <body>{your_answer}</body>) only on the basis of the context i 
+      provide. If the answer is not found in the context then say that the answer
+       for the question is not provided in the context. The context is :${context}`;
+    const AiModelResult = await chatSession.sendMessage(prompt);
+    console.log(AiModelResult.response.text());
   };
   return (
     editor && (

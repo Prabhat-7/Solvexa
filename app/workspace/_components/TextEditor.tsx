@@ -33,6 +33,7 @@ export default function TextEditor() {
       <div>
         <EditorExtensions editor={editor} />
       </div>
+
       <div>
         <EditorContent editor={editor} />
       </div>
