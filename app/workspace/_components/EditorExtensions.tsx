@@ -81,7 +81,20 @@ function EditorExtensions({ editor }: { editor: any }) {
       provide. If the answer is not found in the context then say that the answer
        for the question is not provided in the context. The context is :${context}`;
     const AiModelResult = await chatSession.sendMessage(prompt);
-    console.log(AiModelResult.response.text());
+    const answer = AiModelResult.response.text();
+    const cleanAnswer = answer
+      .replace(/```html/g, "") // Remove ```html
+      .replace(/```/g, "") // Remove ```
+      .trim(); // Trim any extra whitespace
+    const allText = editor.getHTML();
+    return editor.commands.setContent(
+      `${allText} 
+      
+        <p>
+          Answer:${cleanAnswer}
+        </p>
+      `
+    );
   };
   return (
     editor && (
