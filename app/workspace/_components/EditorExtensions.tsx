@@ -11,6 +11,7 @@ import {
   Italic,
   ListIcon,
   ListOrderedIcon,
+  SparklesIcon,
   StrikethroughIcon,
   Subscript,
   Superscript,
@@ -56,7 +57,7 @@ function EditorExtensions({ editor }: { editor: any }) {
             <button
               onClick={() => editor?.chain().focus().toggleBold().run()}
               disabled={!editor}
-              className={`p-0.5 m-0.5 rounded-sm ${
+              className={`w-8 h-8 flex items-center justify-center m-px rounded-sm ${
                 editor?.isActive("bold") ? "is-active bg-gray-200" : ""
               }`}
               aria-label="Toggle bold"
@@ -66,7 +67,7 @@ function EditorExtensions({ editor }: { editor: any }) {
             <button
               onClick={() => editor.chain().focus().toggleItalic().run()}
               disabled={!editor}
-              className={`p-0.5 m-0.5 rounded-sm ${
+              className={`w-8 h-8 flex items-center justify-center m-px rounded-sm ${
                 editor.isActive("italic") ? "is-active bg-gray-200" : ""
               }`}
             >
@@ -74,7 +75,7 @@ function EditorExtensions({ editor }: { editor: any }) {
             </button>
             <button
               onClick={() => editor.chain().focus().toggleUnderline().run()}
-              className={`p-0.5 m-0.5 rounded-sm ${
+              className={`w-8 h-8 flex items-center justify-center m-px rounded-sm ${
                 editor.isActive("underline") ? "is-active bg-gray-200" : ""
               }`}
             >
@@ -82,7 +83,7 @@ function EditorExtensions({ editor }: { editor: any }) {
             </button>
             <button
               onClick={() => editor.chain().focus().toggleSuperscript().run()}
-              className={`p-0.5 m-0.5 rounded-sm ${
+              className={`w-8 h-8 flex items-center justify-center m-px rounded-sm ${
                 editor.isActive("superscript") ? "is-active bg-gray-200" : ""
               }`}
             >
@@ -90,7 +91,7 @@ function EditorExtensions({ editor }: { editor: any }) {
             </button>
             <button
               onClick={() => editor.chain().focus().toggleSubscript().run()}
-              className={`p-0.5 m-0.5 rounded-sm ${
+              className={`w-8 h-8 flex items-center justify-center m-px rounded-sm ${
                 editor.isActive("subscript") ? "is-active bg-gray-200" : ""
               }`}
             >
@@ -98,7 +99,7 @@ function EditorExtensions({ editor }: { editor: any }) {
             </button>
             <button
               onClick={() => editor.chain().focus().setTextAlign("left").run()}
-              className={`p-0.5 m-0.5 rounded-sm ${
+              className={`w-8 h-8 flex items-center justify-center m-px rounded-sm ${
                 editor.isActive({ textAlign: "left" })
                   ? "is-active bg-gray-200"
                   : ""
@@ -110,7 +111,7 @@ function EditorExtensions({ editor }: { editor: any }) {
               onClick={() =>
                 editor.chain().focus().setTextAlign("center").run()
               }
-              className={`p-0.5 m-0.5 rounded-sm ${
+              className={`w-8 h-8 flex items-center justify-center m-px rounded-sm ${
                 editor.isActive({ textAlign: "center" })
                   ? "is-active bg-gray-200"
                   : ""
@@ -120,7 +121,7 @@ function EditorExtensions({ editor }: { editor: any }) {
             </button>
             <button
               onClick={() => editor.chain().focus().setTextAlign("right").run()}
-              className={`p-0.5 m-0.5 rounded-sm ${
+              className={`w-8 h-8 flex items-center justify-center m-px rounded-sm ${
                 editor.isActive({ textAlign: "right" })
                   ? "is-active bg-gray-200"
                   : ""
@@ -132,7 +133,7 @@ function EditorExtensions({ editor }: { editor: any }) {
               onClick={() =>
                 editor.chain().focus().setTextAlign("justify").run()
               }
-              className={`p-0.5 m-0.5 rounded-sm ${
+              className={`w-8 h-8 flex items-center justify-center m-px rounded-sm ${
                 editor.isActive({ textAlign: "justify" })
                   ? "is-active bg-gray-200"
                   : ""
@@ -144,7 +145,7 @@ function EditorExtensions({ editor }: { editor: any }) {
               onClick={() =>
                 editor.chain().focus().toggleHeading({ level: 1 }).run()
               }
-              className={`p-0.5 m-0.5 rounded-sm ${
+              className={`w-8 h-8 flex items-center justify-center m-px rounded-sm ${
                 editor.isActive("heading", { level: 1 })
                   ? "is-active bg-gray-200"
                   : ""
@@ -156,7 +157,7 @@ function EditorExtensions({ editor }: { editor: any }) {
               onClick={() =>
                 editor.chain().focus().toggleHeading({ level: 2 }).run()
               }
-              className={`p-0.5 m-0.5 rounded-sm ${
+              className={`w-8 h-8 flex items-center justify-center m-px rounded-sm ${
                 editor.isActive("heading", { level: 2 })
                   ? "is-active bg-gray-200"
                   : ""
@@ -168,7 +169,7 @@ function EditorExtensions({ editor }: { editor: any }) {
               onClick={() =>
                 editor.chain().focus().toggleHeading({ level: 3 }).run()
               }
-              className={`p-0.5 m-0.5 rounded-sm ${
+              className={`w-8 h-8 flex items-center justify-center m-px rounded-sm ${
                 editor.isActive("heading", { level: 3 })
                   ? "is-active bg-gray-200"
                   : ""
@@ -178,7 +179,7 @@ function EditorExtensions({ editor }: { editor: any }) {
             </button>
             <button
               onClick={() => editor.chain().focus().toggleBlockquote().run()}
-              className={`p-0.5 m-0.5 rounded-sm ${
+              className={`w-8 h-8 flex items-center justify-center m-px rounded-sm ${
                 editor.isActive("blockquote") ? "is-active bg-gray-200" : ""
               }`}
             >
@@ -186,7 +187,7 @@ function EditorExtensions({ editor }: { editor: any }) {
             </button>
             <button
               onClick={() => editor.chain().focus().toggleBulletList().run()}
-              className={`p-0.5 m-0.5 rounded-sm ${
+              className={`w-8 h-8 flex items-center justify-center m-px rounded-sm ${
                 editor.isActive("bulletList") ? "is-active bg-gray-200" : ""
               }`}
             >
@@ -194,7 +195,7 @@ function EditorExtensions({ editor }: { editor: any }) {
             </button>
             <button
               onClick={() => editor.chain().focus().toggleOrderedList().run()}
-              className={`p-0.5 m-0.5 rounded-sm ${
+              className={`w-8 h-8 flex items-center justify-center m-px rounded-sm ${
                 editor.isActive("orderedList") ? "is-active bg-gray-200" : ""
               }`}
             >
@@ -202,7 +203,7 @@ function EditorExtensions({ editor }: { editor: any }) {
             </button>
             <button
               onClick={() => editor.chain().focus().toggleStrike().run()}
-              className={`p-0.5 m-0.5 rounded-sm ${
+              className={`w-8 h-8 flex items-center justify-center m-px rounded-sm ${
                 editor.isActive("strike") ? "is-active bg-gray-200" : ""
               }`}
             >
@@ -210,11 +211,17 @@ function EditorExtensions({ editor }: { editor: any }) {
             </button>
             <button
               onClick={() => editor.chain().focus().toggleHighlight().run()}
-              className={`p-0.5 m-0.5 rounded-sm ${
+              className={`w-8 h-8 flex items-center justify-center m-px rounded-sm ${
                 editor.isActive("highlight") ? "is-active bg-gray-200" : ""
               }`}
             >
               <Highlighter size={15} />
+            </button>
+            <button
+              onClick={() => editor.chain().focus().toggleHighlight().run()}
+              className={`w-8 h-8 flex items-center justify-center ml-3 rounded-sm hover:bg-slate-200`}
+            >
+              <SparklesIcon />
             </button>
           </div>
         </div>
