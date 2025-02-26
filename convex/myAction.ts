@@ -36,7 +36,7 @@ export const search = action({
       }),
       { ctx }
     );
-    const resultOne = await vectorStore.similaritySearch(args.query, 1);
+    const resultOne = await vectorStore.similaritySearch(args.query, 2);
     return JSON.stringify(resultOne);
   },
 });

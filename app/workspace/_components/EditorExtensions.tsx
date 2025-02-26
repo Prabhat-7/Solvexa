@@ -66,7 +66,14 @@ function EditorExtensions({ editor }: { editor: any }) {
       query: selectedText,
       fileId: fileId,
     });
-    console.log(result);
+
+    const JsonResult = await JSON.parse(result);
+    console.log(JsonResult);
+    let context = "";
+    JsonResult.forEach((item: any) => {
+      context += item["pageContent"] + "\n";
+    });
+    console.log(context);
   };
   return (
     editor && (
