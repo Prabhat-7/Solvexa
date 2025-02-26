@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { WebPDFLoader } from "@langchain/community/document_loaders/web/pdf";
-import { RecursiveCharacterTextSplitter } from "@langchain/textsplitters";
+import { TokenTextSplitter } from "@langchain/textsplitters";
 
 export async function GET(request: Request) {
   const reqUrl = request.url;
@@ -18,14 +18,11 @@ export async function GET(request: Request) {
     pdfTextContent += doc.pageContent;
   });
   //SPLIT THE  TEXT INTO CHUNKS
-  const textSplitter = new RecursiveCharacterTextSplitter({
+  const textSplitter = new TokenTextSplitter({
     chunkSize: 500,
     chunkOverlap: 100,
   });
-  const texts = await textSplitter.createDocuments([pdfTextContent]);
-  let chunks: string[] = [];
-  texts.forEach((doc: any) => {
-    chunks.push(doc.pageContent);
-  });
+  const chunks = await textSplitter.splitText(pdfTextContent);
+
   return NextResponse.json({ result: chunks });
 }

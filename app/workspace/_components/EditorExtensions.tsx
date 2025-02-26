@@ -1,3 +1,6 @@
+"use client";
+import { api } from "@/convex/_generated/api";
+import { useAction } from "convex/react";
 import {
   AlignCenter,
   AlignJustify,
@@ -18,6 +21,7 @@ import {
   TextQuoteIcon,
   Underline,
 } from "lucide-react";
+import { useParams } from "next/navigation";
 import React from "react";
 
 const highlightStyles = `
@@ -48,6 +52,22 @@ const highlightStyles = `
 `;
 
 function EditorExtensions({ editor }: { editor: any }) {
+  const { fileId }: { fileId: string } = useParams();
+
+  const search = useAction(api.myAction.search);
+  const process = async (e: React.MouseEvent<HTMLButtonElement>) => {
+    const selectedText = editor.state.doc.textBetween(
+      editor.state.selection.from,
+      editor.state.selection.to,
+      " "
+    );
+    console.log(selectedText);
+    const result = await search({
+      query: selectedText,
+      fileId: fileId,
+    });
+    console.log(result);
+  };
   return (
     editor && (
       <div className="p-5">
@@ -218,10 +238,10 @@ function EditorExtensions({ editor }: { editor: any }) {
               <Highlighter size={15} />
             </button>
             <button
-              onClick={() => editor.chain().focus().toggleHighlight().run()}
+              onClick={(e) => process(e)}
               className={`w-8 h-8 flex items-center justify-center ml-3 rounded-sm hover:bg-slate-200`}
             >
-              <SparklesIcon />
+              <SparklesIcon className="animate-sparkle" />
             </button>
           </div>
         </div>

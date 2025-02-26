@@ -24,7 +24,7 @@ export default function UploadPdfDialog() {
   const [file, setFile] = useState<File | null>();
   const [fileName, setFileName] = useState<string>("");
   const { user } = useUser();
-  const embeddDocuments = useAction(api.Action.ingest);
+  const embeddDocuments = useAction(api.myAction.ingest);
   const AddFileEntry = useMutation(api.fileUpload.AddFileEntryToDb);
   const getFileUrl = useMutation(api.fileUpload.getFileUrl);
   const [isLoading, setLoading] = useState<boolean>(false);
@@ -59,6 +59,7 @@ export default function UploadPdfDialog() {
     console.log(response);
     //API call to fetch PDF processed data
     const ApiResponse = await axios.get("/api/pdf-loader?pdfUrl=" + fileUrl);
+    console.log(ApiResponse.data.result);
 
     await embeddDocuments({
       chunks: ApiResponse.data.result,

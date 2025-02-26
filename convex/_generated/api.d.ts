@@ -13,9 +13,9 @@ import type {
   FilterApi,
   FunctionReference,
 } from "convex/server";
-import type * as Action from "../Action.js";
 import type * as fileUpload from "../fileUpload.js";
 import type * as langchain_db from "../langchain/db.js";
+import type * as myAction from "../myAction.js";
 import type * as user from "../user.js";
 
 /**
@@ -27,9 +27,9 @@ import type * as user from "../user.js";
  * ```
  */
 declare const fullApi: ApiFromModules<{
-  Action: typeof Action;
   fileUpload: typeof fileUpload;
   "langchain/db": typeof langchain_db;
+  myAction: typeof myAction;
   user: typeof user;
 }>;
 export declare const api: FilterApi<

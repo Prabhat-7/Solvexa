@@ -21,3 +21,22 @@ export const ingest = action({
     return "Embeddings stored succesfully";
   },
 });
+export const search = action({
+  args: {
+    query: v.string(),
+    fileId: v.string(),
+  },
+  handler: async (ctx, args) => {
+    const vectorStore = new ConvexVectorStore(
+      new GoogleGenerativeAIEmbeddings({
+        apiKey: "AIzaSyBOT6MnA15VLuyX-LPt18SPHYEAedwzo_U",
+        model: "text-embedding-004", // 768 dimensions
+        taskType: TaskType.RETRIEVAL_DOCUMENT,
+        title: "Document title",
+      }),
+      { ctx }
+    );
+    const resultOne = await vectorStore.similaritySearch(args.query, 1);
+    return JSON.stringify(resultOne);
+  },
+});
