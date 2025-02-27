@@ -1,7 +1,8 @@
 "use client";
 import { sendMessageWithFallback } from "@/configs/AiModel";
 import { api } from "@/convex/_generated/api";
-import { useAction } from "convex/react";
+import { useUser } from "@clerk/nextjs";
+import { useAction, useMutation } from "convex/react";
 import {
   AlignCenter,
   AlignJustify,
@@ -23,7 +24,6 @@ import {
   Underline,
 } from "lucide-react";
 import { useParams } from "next/navigation";
-import { send } from "node:process";
 
 import React from "react";
 
@@ -56,8 +56,9 @@ const highlightStyles = `
 
 function EditorExtensions({ editor }: { editor: any }) {
   const { fileId }: { fileId: string } = useParams();
-
+  const { user } = useUser();
   const search = useAction(api.myAction.search);
+  const saveNotes = useMutation(api.notes.AddNotes);
   const process = async () => {
     const selectedText = editor.state.doc.textBetween(
       editor.state.selection.from,
@@ -96,15 +97,19 @@ function EditorExtensions({ editor }: { editor: any }) {
     const cleanAnswer = AiModelResult.replace(/```html/g, "") // Remove ```html
       .replace(/```/g, "") // Remove ```
       .trim(); // Trim any extra whitespace
-    return editor.commands.setContent(
+    editor.commands.setContent(
       `${allText} 
       
         <p>
-          
-          <strong>Answer:</strong>${cleanAnswer}
+           <strong>Answer:</strong>${cleanAnswer}
         </p>
       `
     );
+    saveNotes({
+      notes: editor.getHTML(),
+      fileId: fileId,
+      createdBy: user?.primaryEmailAddress?.emailAddress ?? "",
+    });
   };
 
   return (
