@@ -1,26 +1,18 @@
-// First, load the environment variables
-require("dotenv").config({ path: "./.env.local" });
-
-// Then import your modules
 import { GoogleGenerativeAI } from "@google/generative-ai";
 
-// Log to verify the API key is available
 const apiKey = process.env.NEXT_PUBLIC_GOOGLE_API_KEY;
-console.log("API Key available:", !!apiKey); // This should print "true" if available
-
-// Create a properly typed variable for the API key
-const googleApiKey: string = apiKey || "";
-
-// Check if we have a valid API key
-if (!googleApiKey) {
+if (!apiKey) {
   throw new Error("Google API key is not available");
 }
+const googleApiKey: string = apiKey;
 
-// Use the API key
-const genAI = new GoogleGenerativeAI(googleApiKey);
-const model = genAI.getGenerativeModel({
-  model: "gemini-2.0-pro-exp-02-05",
-});
+const modelCodes = [
+  "gemini-2.0-pro-exp-02-05",
+  "gemini-2.0-flash",
+  "gemini-1.5-pro",
+  "gemini-1.5-flash",
+];
+
 const generationConfig = {
   temperature: 1,
   topP: 0.95,
@@ -29,10 +21,30 @@ const generationConfig = {
   responseMimeType: "text/plain",
 };
 
-export const chatSession = model.startChat({
-  generationConfig,
-  history: [],
-});
+const genAI = new GoogleGenerativeAI(googleApiKey);
 
-// const result = await chatSession.sendMessage("INSERT_INPUT_HERE");
-// console.log(result.response.text()
+// Recursive function to load and use a model only when needed:
+export async function sendMessageWithFallback(
+  message: string,
+  codes = modelCodes
+): Promise<string> {
+  if (codes.length === 0) {
+    throw new Error("All models failed");
+  }
+
+  const currentModelCode = codes[0];
+  try {
+    // Only call getGenerativeModel here, so that fallback models are loaded only if necessary
+    const model = genAI.getGenerativeModel({ model: currentModelCode });
+    const chatSession = model.startChat({
+      generationConfig,
+      history: [],
+    });
+    const response = await chatSession.sendMessage(message);
+    return response.response.text();
+  } catch (err) {
+    console.error(`${currentModelCode} failed:`, err);
+    // Try the next model code
+    return sendMessageWithFallback(message, codes.slice(1));
+  }
+}

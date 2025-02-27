@@ -1,5 +1,5 @@
 "use client";
-import { chatSession } from "@/configs/AiModel";
+import { sendMessageWithFallback } from "@/configs/AiModel";
 import { api } from "@/convex/_generated/api";
 import { useAction } from "convex/react";
 import {
@@ -23,6 +23,7 @@ import {
   Underline,
 } from "lucide-react";
 import { useParams } from "next/navigation";
+import { send } from "node:process";
 
 import React from "react";
 
@@ -64,7 +65,7 @@ function EditorExtensions({ editor }: { editor: any }) {
       " "
     );
     const allText = editor.getHTML();
-    console.log(selectedText);
+
     editor.commands.setContent(`${allText}\nGenerating...`);
     const result = await search({
       query: selectedText,
@@ -72,12 +73,10 @@ function EditorExtensions({ editor }: { editor: any }) {
     });
 
     const JsonResult = await JSON.parse(result);
-    console.log(JsonResult);
     let context = "";
     JsonResult.forEach((item: any) => {
       context += item["pageContent"] + "\n";
     });
-    console.log(context);
     const prompt: string = `You are an expert in note-making. I will provide a question, and your job is to write a concise answer as if you are taking notes.  
     ### **Answering Style:**  
     1. **Start with a few direct sentences that answer the question.**  
@@ -92,10 +91,9 @@ function EditorExtensions({ editor }: { editor: any }) {
     If the answer is not found in the context, respond with:  
     *"The answer to the question is not provided in the context."*
     `;
-    const AiModelResult = await chatSession.sendMessage(prompt);
-    const answer = AiModelResult.response.text();
-    const cleanAnswer = answer
-      .replace(/```html/g, "") // Remove ```html
+    const AiModelResult = await sendMessageWithFallback(prompt);
+
+    const cleanAnswer = AiModelResult.replace(/```html/g, "") // Remove ```html
       .replace(/```/g, "") // Remove ```
       .trim(); // Trim any extra whitespace
     return editor.commands.setContent(
