@@ -18,15 +18,15 @@ const PdfViewer = dynamic(
 
 export default function Workspace() {
   const { fileId }: { fileId: string } = useParams();
-  const GetFileRecord = useQuery(api.fileUpload.GetFileRecord, {
+  const fileInfo = useQuery(api.fileUpload.GetFileRecord, {
     fileId: fileId,
   });
   useEffect(() => {
-    console.log(GetFileRecord);
-  }, [GetFileRecord]);
+    console.log(fileInfo);
+  }, [fileInfo]);
   return (
     <div className="h-screen flex flex-col">
-      <Header />
+      <Header fileName={fileInfo?.fileName} />
       <div className="grid grid-cols-2 pr-2 flex-1 overflow-hidden">
         <div className="overflow-auto">
           {/* Text editor */}
@@ -35,8 +35,8 @@ export default function Workspace() {
 
         <div className="overflow-auto">
           {/* Pdf viewer */}
-          {GetFileRecord ? (
-            <PdfViewer fileUrl={GetFileRecord.fileUrl} />
+          {fileInfo ? (
+            <PdfViewer fileUrl={fileInfo.fileUrl} />
           ) : (
             <div className="flex justify-center items-center h-full">
               Loading...

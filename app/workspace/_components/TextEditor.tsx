@@ -29,8 +29,8 @@ export default function TextEditor() {
     editorProps: { attributes: { class: "focus:outline-none h-screen p-5" } },
   });
   return (
-    <div>
-      <div>
+    <div className="relative">
+      <div className="sticky top-0 z-10 bg-white">
         <EditorExtensions editor={editor} />
       </div>
 

@@ -23,6 +23,7 @@ import {
   Underline,
 } from "lucide-react";
 import { useParams } from "next/navigation";
+
 import React from "react";
 
 const highlightStyles = `
@@ -56,13 +57,15 @@ function EditorExtensions({ editor }: { editor: any }) {
   const { fileId }: { fileId: string } = useParams();
 
   const search = useAction(api.myAction.search);
-  const process = async (e: React.MouseEvent<HTMLButtonElement>) => {
+  const process = async () => {
     const selectedText = editor.state.doc.textBetween(
       editor.state.selection.from,
       editor.state.selection.to,
       " "
     );
+    const allText = editor.getHTML();
     console.log(selectedText);
+    editor.commands.setContent(`${allText}\nGenerating...`);
     const result = await search({
       query: selectedText,
       fileId: fileId,
@@ -75,33 +78,43 @@ function EditorExtensions({ editor }: { editor: any }) {
       context += item["pageContent"] + "\n";
     });
     console.log(context);
-    const prompt = `For the question: ${selectedText}\n Provide me an appropriate
-     answer in HTML format(Put everything inside the body tag but dont include it
-      . Like this  <body>{your_answer}</body>) only on the basis of the context i 
-      provide. If the answer is not found in the context then say that the answer
-       for the question is not provided in the context. The context is :${context}`;
+    const prompt: string = `You are an expert in note-making. I will provide a question, and your job is to write a concise answer as if you are taking notes.  
+    ### **Answering Style:**  
+    1. **Start with a few direct sentences that answer the question.**  
+    2. **If necessary, include a short list of key points.**  
+    3. **For equations or formulas, use a line gap and proper indentation.**  
+    4. **Do not add unnecessary explanations or extra points.**  
+    
+    For the question: **${selectedText}**  
+    Provide an appropriate answer in **HTML format** (everything inside the \`<body>\` tag, but do not include the tag itself).  
+    
+    Only use the context provided: **${context}**  
+    If the answer is not found in the context, respond with:  
+    *"The answer to the question is not provided in the context."*
+    `;
     const AiModelResult = await chatSession.sendMessage(prompt);
     const answer = AiModelResult.response.text();
     const cleanAnswer = answer
       .replace(/```html/g, "") // Remove ```html
       .replace(/```/g, "") // Remove ```
       .trim(); // Trim any extra whitespace
-    const allText = editor.getHTML();
     return editor.commands.setContent(
       `${allText} 
       
         <p>
-          Answer:${cleanAnswer}
+          
+          <strong>Answer:</strong>${cleanAnswer}
         </p>
       `
     );
   };
+
   return (
     editor && (
-      <div className="p-5">
+      <div className="p-5 ">
         <style>{highlightStyles}</style>
-        <div className="control-group">
-          <div className="button-group flex ">
+        <div className="control-group ">
+          <div className="button-group flex  ">
             <button
               onClick={() => editor?.chain().focus().toggleBold().run()}
               disabled={!editor}
@@ -266,7 +279,7 @@ function EditorExtensions({ editor }: { editor: any }) {
               <Highlighter size={15} />
             </button>
             <button
-              onClick={(e) => process(e)}
+              onClick={(e) => process()}
               className={`w-8 h-8 flex items-center justify-center ml-3 rounded-sm hover:bg-slate-200`}
             >
               <SparklesIcon className="animate-sparkle" />

@@ -19,7 +19,7 @@ if (!googleApiKey) {
 // Use the API key
 const genAI = new GoogleGenerativeAI(googleApiKey);
 const model = genAI.getGenerativeModel({
-  model: "gemini-2.0-flash",
+  model: "gemini-2.0-pro-exp-02-05",
 });
 const generationConfig = {
   temperature: 1,
