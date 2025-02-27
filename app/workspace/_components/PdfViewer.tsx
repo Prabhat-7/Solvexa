@@ -11,6 +11,7 @@ import "react-pdf/dist/Page/TextLayer.css";
 import "react-pdf/dist/Page/AnnotationLayer.css";
 
 function PdfViewer({ fileUrl }: { fileUrl: string }) {
+  console.log(fileUrl);
   const [numPages, setNumPages] = useState<number>();
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [containerWidth, setContainerWidth] = useState<number>(0);

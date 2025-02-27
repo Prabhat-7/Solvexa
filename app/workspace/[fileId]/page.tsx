@@ -1,6 +1,6 @@
 "use client";
 import { useParams } from "next/navigation";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import Header from "../_components/header";
 import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
@@ -17,6 +17,7 @@ const PdfViewer = dynamic(
 );
 
 export default function Workspace() {
+  const [editorInstance, setEditorInstance] = useState(null);
   const { fileId }: { fileId: string } = useParams();
   const fileInfo = useQuery(api.fileUpload.GetFileRecord, {
     fileId: fileId,
@@ -26,11 +27,12 @@ export default function Workspace() {
   }, [fileInfo]);
   return (
     <div className="h-screen flex flex-col">
-      <Header fileName={fileInfo?.fileName} />
+      <Header fileInfo={fileInfo} editor={editorInstance} />
+
       <div className="grid grid-cols-2 pr-2 flex-1 overflow-hidden">
         <div className="overflow-auto">
           {/* Text editor */}
-          <TextEditor />
+          <TextEditor fileId={fileId} setEditor={setEditorInstance} />
         </div>
 
         <div className="overflow-auto">

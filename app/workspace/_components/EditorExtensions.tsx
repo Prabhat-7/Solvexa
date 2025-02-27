@@ -2,7 +2,7 @@
 import { sendMessageWithFallback } from "@/configs/AiModel";
 import { api } from "@/convex/_generated/api";
 import { useUser } from "@clerk/nextjs";
-import { useAction, useMutation } from "convex/react";
+import { useAction } from "convex/react";
 import {
   AlignCenter,
   AlignJustify,
@@ -56,9 +56,9 @@ const highlightStyles = `
 
 function EditorExtensions({ editor }: { editor: any }) {
   const { fileId }: { fileId: string } = useParams();
-  const { user } = useUser();
+
   const search = useAction(api.myAction.search);
-  const saveNotes = useMutation(api.notes.AddNotes);
+
   const process = async () => {
     const selectedText = editor.state.doc.textBetween(
       editor.state.selection.from,
@@ -105,11 +105,6 @@ function EditorExtensions({ editor }: { editor: any }) {
         </p>
       `
     );
-    saveNotes({
-      notes: editor.getHTML(),
-      fileId: fileId,
-      createdBy: user?.primaryEmailAddress?.emailAddress ?? "",
-    });
   };
 
   return (

@@ -1,4 +1,4 @@
-import { mutation } from "./_generated/server";
+import { mutation, query } from "./_generated/server";
 import { v } from "convex/values";
 
 export const AddNotes = mutation({
@@ -21,5 +21,18 @@ export const AddNotes = mutation({
     } else {
       await ctx.db.patch(record[0]._id, { notes: args.notes });
     }
+  },
+});
+export const getNotes = query({
+  args: {
+    fileId: v.string(),
+  },
+  handler: async (ctx, args) => {
+    const result = await ctx.db
+      .query("notes")
+      .filter((q) => q.eq(q.field("fileId"), args.fileId))
+      .collect();
+    const notes = result[0].notes;
+    return notes;
   },
 });
