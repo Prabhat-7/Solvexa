@@ -18,7 +18,7 @@ export default function RootLayout({
   return (
     <ClerkProvider>
       <html lang="en">
-        <body className={outfit.className}>
+        <body className={outfit.className} suppressHydrationWarning>
           <Provider>{children}</Provider>
         </body>
       </html>
