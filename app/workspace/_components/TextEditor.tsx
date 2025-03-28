@@ -18,6 +18,7 @@ interface textEditorProps {
 }
 export default function TextEditor({ fileId, setEditor }: textEditorProps) {
   const notes = useQuery(api.notes.getNotes, { fileId: fileId! });
+  const editorContent = notes || " ";
   const editor = useEditor({
     extensions: [
       StarterKit,
@@ -41,7 +42,7 @@ export default function TextEditor({ fileId, setEditor }: textEditorProps) {
     if (setEditor) {
       setEditor(editor);
     }
-    editor?.commands.setContent(notes);
+    editor?.commands.setContent(editorContent);
     return () => {
       if (setEditor) {
         setEditor(null);

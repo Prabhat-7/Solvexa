@@ -32,6 +32,7 @@ export const getNotes = query({
       .query("notes")
       .filter((q) => q.eq(q.field("fileId"), args.fileId))
       .collect();
+    if (result.length == 0) return null;
     const notes = result[0].notes;
     return notes;
   },

@@ -4,6 +4,7 @@ import { ConvexVectorStore } from "@langchain/community/vectorstores/convex";
 import { action } from "./_generated/server.js";
 import { GoogleGenerativeAIEmbeddings } from "@langchain/google-genai";
 import { TaskType } from "@google/generative-ai";
+
 export const ingest = action({
   args: { chunks: v.array(v.string()), fileId: v.any() },
   handler: async (ctx, args) => {
@@ -36,7 +37,7 @@ export const search = action({
       }),
       { ctx }
     );
-    const resultOne = await vectorStore.similaritySearch(args.query, 2);
+    const resultOne = await vectorStore.similaritySearch(args.query, 3);
     return JSON.stringify(resultOne);
   },
 });

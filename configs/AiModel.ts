@@ -1,6 +1,8 @@
+"use server";
+import "server-only";
 import { GoogleGenerativeAI } from "@google/generative-ai";
 
-const apiKey = process.env.NEXT_PUBLIC_GOOGLE_API_KEY;
+const apiKey = process.env.GOOGLE_API_KEY;
 if (!apiKey) {
   throw new Error("Google API key is not available");
 }
