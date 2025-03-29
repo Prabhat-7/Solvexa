@@ -1,8 +1,7 @@
 "use client";
 import React from "react";
-
 import Image from "next/image";
-import { Layout, Shield } from "lucide-react";
+import { Layout, Shield, ChevronRight } from "lucide-react";
 import { Progress } from "@/components/ui/progress";
 import UploadPdfDialog from "./UploadPdfDialog";
 import { useUser } from "@clerk/nextjs";
@@ -10,6 +9,7 @@ import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
+import { cn } from "@/lib/utils";
 
 export default function SideBar() {
   const path = usePathname();
@@ -17,49 +17,107 @@ export default function SideBar() {
   const fileList = useQuery(api.fileUpload.GetUserFies, {
     userEmail: user?.primaryEmailAddress?.emailAddress ?? "",
   });
+
+  const navigation = [
+    {
+      name: "Workspace",
+      href: "/dashboard",
+      icon: Layout,
+      current: path === "/dashboard",
+    },
+    {
+      name: "Upgrade",
+      href: "/dashboard/upgrade",
+      icon: Shield,
+      current: path === "/dashboard/upgrade",
+    },
+  ];
+  console.log(user);
   return (
-    <div className="shadow-lg h-screen">
-      <Image
-        src={"/logo.png"}
-        alt={"logo"}
-        width={170}
-        height={120}
-        className="ml-4"
-      ></Image>
-      <div className="mt-10 p-3">
-        {fileList && (
-          <UploadPdfDialog
-            HasReachedLimit={fileList?.length >= 5 ? true : false}
-          />
-        )}
-        <Link href={"/dashboard"}>
-          <div
-            className={`flex gap-2 items-center p-5 mt-5 hover:bg-slate-100 cursor-pointer rounded-md ${
-              path == "/dashboard" ? "bg-slate-200" : ""
-            }`}
-          >
-            <Layout />
-            <h2>Workspace</h2>
+    <div className="flex flex-col h-screen bg-white border-r border-gray-200">
+      {/* Logo Section */}
+      <div className="p-6">
+        <Image
+          src="/logo.png"
+          alt="logo"
+          width={170}
+          height={120}
+          className="object-contain"
+          priority
+        />
+      </div>
+
+      {/* Navigation Section */}
+      <nav className="flex-1 px-4 space-y-1">
+        {navigation.map((item) => (
+          <Link key={item.name} href={item.href}>
+            <div
+              className={cn(
+                "flex items-center justify-between px-4 py-3 rounded-lg transition-colors",
+                "hover:bg-gray-100 cursor-pointer group",
+                item.current && "bg-gray-100"
+              )}
+            >
+              <div className="flex items-center gap-3">
+                <item.icon
+                  className={cn(
+                    "w-5 h-5 transition-colors",
+                    item.current
+                      ? "text-blue-600"
+                      : "text-gray-500 group-hover:text-gray-700"
+                  )}
+                />
+                <span
+                  className={cn(
+                    "text-sm font-medium",
+                    item.current
+                      ? "text-blue-600"
+                      : "text-gray-700 group-hover:text-gray-900"
+                  )}
+                >
+                  {item.name}
+                </span>
+              </div>
+              <ChevronRight
+                className={cn(
+                  "w-4 h-4 transition-transform",
+                  item.current
+                    ? "text-blue-600"
+                    : "text-gray-400 group-hover:text-gray-600",
+                  "opacity-0 group-hover:opacity-100"
+                )}
+              />
+            </div>
+          </Link>
+        ))}
+      </nav>
+
+      {/* Usage Stats Section */}
+      <div className="p-6 border-t border-gray-200">
+        <div className="space-y-4">
+          <div className="space-y-3 pb-3">
+            <div className="flex items-center justify-between text-sm">
+              <span className="font-medium text-gray-700">Storage Usage</span>
+              <span className="text-gray-500">
+                {fileList?.length || 0}/5 PDFs
+              </span>
+            </div>
+            <Progress
+              value={(fileList ? fileList.length / 5 : 0) * 100}
+              className="h-2 bg-gray-100"
+            />
           </div>
-        </Link>
-        <Link href={"/dashboard/upgrade"}>
-          <div
-            className={`flex gap-2 items-center p-5 mt-5 hover:bg-slate-100 cursor-pointer rounded-md ${
-              path == "/dashboard/upgrade" ? "bg-slate-200" : ""
-            }`}
-          >
-            <Shield />
-            <h2>Upgrade</h2>
+          <div className="flex items-start gap-3 p-4 bg-gray-50 rounded-lg">
+            <Shield className="w-5 h-5 text-blue-600 mt-0.5" />
+            <div>
+              <p className="text-sm font-medium text-gray-900">
+                Upgrade Available
+              </p>
+              <p className="text-xs text-gray-500 mt-1">
+                Unlock unlimited PDF uploads and premium features
+              </p>
+            </div>
           </div>
-        </Link>
-        <div className="absolute bottom-24 w-[80%] ">
-          <Progress value={(fileList ? fileList.length / 5 : 0) * 100} />
-          <p className="text-sm mt-1">
-            {fileList?.length} out of 5 PDF Uploaded
-          </p>
-          <p className="text-xs text-gray-400 mt-2 ">
-            Upgrade to Upload more PDF
-          </p>
         </div>
       </div>
     </div>

@@ -18,7 +18,7 @@ import { useToast } from "@/hooks/use-toast";
 import { api } from "@/convex/_generated/api";
 import React, { ChangeEvent, useState } from "react";
 import { useAction, useMutation } from "convex/react";
-import { Loader2Icon } from "lucide-react";
+import { Loader2Icon, Plus } from "lucide-react";
 import { useUser } from "@clerk/nextjs";
 
 export default function UploadPdfDialog({
@@ -130,13 +130,14 @@ export default function UploadPdfDialog({
                 });
               } else setOpen(true);
             }}
-            className={`w-full ${
+            className={`flex items-center gap-2  ${
               HasReachedLimit
                 ? "hover:cursor-not-allowed"
                 : "hover:cursor-pointer"
             }`}
           >
-            +Upload File
+            <Plus size={20} />
+            New Document
           </Button>
         </DialogTrigger>
         <DialogContent>
