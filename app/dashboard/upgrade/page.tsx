@@ -10,7 +10,7 @@ function UpgradePlans() {
 
   const handlePayment = async () => {
     const formData = {
-      return_url: "http://localhost:3000/",
+      return_url: "http://localhost:3000/checkout",
       website_url: "http://localhost:3000/",
       amount: 49999,
       purchase_order_id: "Order02",
