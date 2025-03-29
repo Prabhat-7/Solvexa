@@ -3,11 +3,26 @@ import crypto, { hash } from "crypto";
 import { NextResponse } from "next/server";
 
 export async function POST(request: Request) {
-  const { message } = await request.json();
-  const secret = "8gBm/:&EnhH.1/q";
-  const hmac = crypto.createHmac("sha256", secret);
-  hmac.update(message);
-  const signature = hmac.digest("base64"); // Convert to Base64
-  console.log(signature);
-  return NextResponse.json({ signature: signature });
+  const formData = await request.json();
+  try {
+    const response = await fetch(
+      "https://dev.khalti.com/api/v2/epayment/initiate/",
+      {
+        method: "POST",
+        headers: {
+          "Authorization": "key cdfb94b887b045daa70db45fc19648f7",
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData.body),
+      }
+    );
+    const data = response.json();
+    console.log(data);
+    return NextResponse.json(data);
+  } catch (err: any) {
+    return NextResponse.json(
+      { error: `An error occurred: ${err.message}` },
+      { status: 500 }
+    );
+  }
 }
