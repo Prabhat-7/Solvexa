@@ -1,6 +1,7 @@
 "use client";
+
 // TODO - Make the UI Better , and update the cookie to make the user paid user , and then after all that redirect the user to the dashboard page
-import { useSearchParams } from "next/navigation";
+import { usePathname, useSearchParams } from "next/navigation";
 import React, { useEffect } from "react";
 export default function page() {
   const searchParams = useSearchParams();
@@ -19,9 +20,10 @@ export default function page() {
       const data = await response.json();
 
       if (data.success) {
-        console.log("Done");
+        window.location.href =
+          "http://localhost:3000/dashboard?payment=success";
       } else {
-        console.log("Fuck off get some money");
+        window.location.href = "http://localhost:3000/dashboard?payment=failed";
       }
       console.log(data);
     }

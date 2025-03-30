@@ -1,13 +1,8 @@
 "use client";
 import React from "react";
-import { Button } from "@/components/ui/button";
 import PricingComponents from "../_components/pricingComponents";
-import { useUser } from "@clerk/nextjs";
 import { Sparkles } from "lucide-react";
-
 function UpgradePlans() {
-  const { user } = useUser();
-
   const handlePayment = async () => {
     const formData = {
       return_url: "http://localhost:3000/checkout",
@@ -23,7 +18,7 @@ function UpgradePlans() {
     };
 
     try {
-      const response = await fetch("/api/generateSignature", {
+      const response = await fetch("/api/initiatePayment", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

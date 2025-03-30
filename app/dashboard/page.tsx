@@ -3,8 +3,10 @@ import { api } from "@/convex/_generated/api";
 import { useUser } from "@clerk/nextjs";
 import { useQuery } from "convex/react";
 import { useMutation } from "convex/react";
+import { FaCheckCircle } from "react-icons/fa";
+import { FaCircleXmark } from "react-icons/fa6";
 import Image from "next/image";
-import React, { useEffect, useState } from "react";
+import React, { use, useEffect, useState } from "react";
 import {
   Dialog,
   DialogContent,
@@ -14,12 +16,16 @@ import {
   DialogFooter,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { useRouter } from "next/navigation";
-import { FileText, Plus, Search } from "lucide-react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { Check, FileText, Plus, Search } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import UploadPdfDialog from "./_components/UploadPdfDialog";
+import { Toaster } from "@/components/ui/toaster";
+import { useToast } from "@/hooks/use-toast";
+import { ToastAction } from "@/components/ui/toast";
 
 export default function Dashboard() {
+  const { toast } = useToast();
   const { user } = useUser();
   const router = useRouter();
   const [searchQuery, setSearchQuery] = useState("");
@@ -28,12 +34,55 @@ export default function Dashboard() {
     fileName: string;
   } | null>(null);
   const createUser = useMutation(api.user.createUser);
-
+  const searchParams = useSearchParams();
   useEffect(() => {
     if (user) {
       CheckUser();
     }
   }, [user]);
+  useEffect(() => {
+    if (searchParams.get("payment") == "success") {
+      toast({
+        title: "",
+        description: (
+          <div className="grid grid-rows-2 ">
+            <div className="flex items-center gap-1 font-bold ">
+              <FaCheckCircle size={15} className="text-white p-0" />
+              <p className="">Payment Successfull</p>
+            </div>
+            <div>You are now a Pro user.</div>
+          </div>
+        ),
+        variant: "success",
+      });
+    } else if (searchParams.get("payment") == null) {
+      return;
+    } else {
+      toast({
+        title: "",
+        description: (
+          <div className="grid grid-rows-2 ">
+            <div className="flex items-center gap-1 font-bold ">
+              <FaCircleXmark size={15} className="text-red p-0" />
+              <p className="">Payment failed</p>
+            </div>
+            <div>Payment is not recieved.</div>
+          </div>
+        ),
+        variant: "destructive",
+        action: (
+          <ToastAction
+            onClick={() =>
+              (window.location.href = "http://localhost:3000/dashboard/upgrade")
+            }
+            altText="Try again"
+          >
+            Try again
+          </ToastAction>
+        ),
+      });
+    }
+  }, []);
 
   const CheckUser = async () => {
     try {
@@ -165,6 +214,7 @@ export default function Dashboard() {
             </DialogFooter>
           </DialogContent>
         </Dialog>
+        <Toaster />
       </div>
     </div>
   );
