@@ -1,9 +1,8 @@
 "use client";
 import React from "react";
 import Image from "next/image";
-import { Layout, Shield, ChevronRight } from "lucide-react";
+import { Layout, Shield, ChevronRight, FileText, Star } from "lucide-react";
 import { Progress } from "@/components/ui/progress";
-import UploadPdfDialog from "./UploadPdfDialog";
 import { useUser } from "@clerk/nextjs";
 import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
@@ -12,8 +11,11 @@ import Link from "next/link";
 import { cn } from "@/lib/utils";
 
 export default function SideBar() {
-  const path = usePathname();
   const { user } = useUser();
+  const UserInfo = useQuery(api.user.getUserInfo, {
+    userEmail: user?.primaryEmailAddress?.emailAddress ?? "",
+  });
+  const path = usePathname();
   const fileList = useQuery(api.fileUpload.GetUserFies, {
     userEmail: user?.primaryEmailAddress?.emailAddress ?? "",
   });
@@ -32,7 +34,6 @@ export default function SideBar() {
       current: path === "/dashboard/upgrade",
     },
   ];
-  console.log(user);
   return (
     <div className="flex flex-col h-screen bg-white border-r border-gray-200">
       {/* Logo Section */}
@@ -92,33 +93,61 @@ export default function SideBar() {
         ))}
       </nav>
 
-      {/* Usage Stats Section */}
+      {/* Status Bar Section */}
       <div className="p-6 border-t border-gray-200">
-        <div className="space-y-4">
-          <div className="space-y-3 pb-3">
-            <div className="flex items-center justify-between text-sm">
-              <span className="font-medium text-gray-700">Storage Usage</span>
-              <span className="text-gray-500">
-                {fileList?.length || 0}/5 PDFs
-              </span>
+        {UserInfo?.isProUser ? (
+          // Pro User Status Bar
+          <div className="space-y-4">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <Star className="w-5 h-5 text-yellow-500" />
+                <span className="text-sm font-medium text-gray-900">
+                  Pro Account
+                </span>
+              </div>
             </div>
-            <Progress
-              value={(fileList ? fileList.length / 5 : 0) * 100}
-              className="h-2 bg-gray-100"
-            />
-          </div>
-          <div className="flex items-start gap-3 p-4 bg-gray-50 rounded-lg">
-            <Shield className="w-5 h-5 text-blue-600 mt-0.5" />
-            <div>
-              <p className="text-sm font-medium text-gray-900">
-                Upgrade Available
-              </p>
-              <p className="text-xs text-gray-500 mt-1">
-                Unlock unlimited PDF uploads and premium features
-              </p>
+
+            <div className="flex items-start gap-3 p-4 bg-blue-50 rounded-lg">
+              <FileText className="w-5 h-5 text-blue-600 mt-0.5" />
+              <div>
+                <p className="text-sm font-medium text-gray-900">
+                  {fileList?.length || 0} PDF{fileList?.length !== 1 ? "s" : ""}{" "}
+                  Uploaded
+                </p>
+                <p className="text-xs text-gray-500 mt-1">
+                  Unlimited storage available
+                </p>
+              </div>
             </div>
           </div>
-        </div>
+        ) : (
+          // Free User Status Bar
+          <div className="space-y-4">
+            <div className="space-y-3 pb-3">
+              <div className="flex items-center justify-between text-sm">
+                <span className="font-medium text-gray-700">Storage Usage</span>
+                <span className="text-gray-500">
+                  {fileList?.length || 0}/5 PDFs
+                </span>
+              </div>
+              <Progress
+                value={(fileList ? fileList.length / 5 : 0) * 100}
+                className="h-2 bg-gray-100"
+              />
+            </div>
+            <div className="flex items-start gap-3 p-4 bg-gray-50 rounded-lg">
+              <Shield className="w-5 h-5 text-blue-600 mt-0.5" />
+              <div>
+                <p className="text-sm font-medium text-gray-900">
+                  Upgrade Available
+                </p>
+                <p className="text-xs text-gray-500 mt-1">
+                  Unlock unlimited PDF uploads and premium features
+                </p>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

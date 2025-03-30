@@ -110,7 +110,6 @@ export default function UploadPdfDialog({
       });
 
       setLoading(false);
-      console.error(error);
     }
   };
 

@@ -1,34 +1,58 @@
 "use client";
-
-// TODO - Make the UI Better , and update the cookie to make the user paid user , and then after all that redirect the user to the dashboard page
-import { usePathname, useSearchParams } from "next/navigation";
+import { api } from "@/convex/_generated/api";
+import { useUser } from "@clerk/nextjs";
+import { useMutation } from "convex/react";
+import { useSearchParams, useRouter } from "next/navigation";
 import React, { useEffect } from "react";
-export default function page() {
+
+export default function Page() {
+  const { user, isLoaded } = useUser();
+  const router = useRouter();
+  const makeProUser = useMutation(api.user.makeProUser);
   const searchParams = useSearchParams();
-  console.log(searchParams.get("pidx"));
-  console.log(searchParams.get("status"));
-  console.log(searchParams.get("tidx"));
 
   useEffect(() => {
-    async function run() {
-      const response = await fetch("/api/validateTransaction", {
-        method: "POST",
-        body: JSON.stringify({
-          pidx: searchParams.get("pidx"),
-        }),
-      });
-      const data = await response.json();
+    // Only run this effect when the user data is loaded and we have the actual user
+    if (!isLoaded || !user) {
+      return;
+    }
 
-      if (data.success) {
-        window.location.href =
-          "http://localhost:3000/dashboard?payment=success";
-      } else {
-        window.location.href = "http://localhost:3000/dashboard?payment=failed";
+    async function run() {
+      try {
+        const response = await fetch("/api/validateTransaction", {
+          method: "POST",
+          body: JSON.stringify({
+            pidx: searchParams.get("pidx"),
+          }),
+        });
+
+        const data = await response.json();
+
+        if (data.success) {
+          const result = await makeProUser({
+            email: user?.primaryEmailAddress?.emailAddress ?? "",
+          });
+          router.push("http://localhost:3000/dashboard?payment=success");
+        } else {
+          router.push("http://localhost:3000/dashboard?payment=failed");
+        }
+      } catch (error) {
+        router.push("http://localhost:3000/dashboard?payment=failed");
       }
-      console.log(data);
     }
 
     run();
-  }, []);
-  return <div>{JSON.stringify(searchParams)}</div>;
+  }, [isLoaded, user, searchParams, makeProUser, router]);
+
+  return (
+    <div className="min-h-screen flex items-center justify-center bg-gray-50">
+      <div className="text-center p-8 rounded-lg bg-white shadow-md">
+        <h1 className="text-2xl font-bold mb-4">Processing Payment</h1>
+        <p className="text-gray-600 mb-2">
+          Please wait while we verify your payment...
+        </p>
+        <div className="animate-pulse h-2 w-full bg-blue-200 rounded"></div>
+      </div>
+    </div>
+  );
 }

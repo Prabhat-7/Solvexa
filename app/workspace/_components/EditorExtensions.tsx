@@ -1,8 +1,9 @@
 "use client";
 import { sendMessageWithFallback } from "@/configs/AiModel";
 import { api } from "@/convex/_generated/api";
+import { useToast } from "@/hooks/use-toast";
 import { useUser } from "@clerk/nextjs";
-import { useAction } from "convex/react";
+import { useAction, useMutation } from "convex/react";
 import {
   AlignCenter,
   AlignJustify,
@@ -16,6 +17,7 @@ import {
   Italic,
   ListIcon,
   ListOrderedIcon,
+  SaveIcon,
   SparklesIcon,
   StrikethroughIcon,
   Subscript,
@@ -55,9 +57,18 @@ const highlightStyles = `
 `;
 
 function EditorExtensions({ editor }: { editor: any }) {
+  const { toast } = useToast();
   const { fileId }: { fileId: string } = useParams();
-
+  const { user } = useUser();
   const search = useAction(api.myAction.search);
+  const saveNotes = useMutation(api.notes.AddNotes);
+  const save = () => {
+    saveNotes({
+      notes: editor.getHTML(),
+      fileId: fileId,
+      createdBy: user?.primaryEmailAddress?.emailAddress ?? "",
+    });
+  };
 
   const process = async () => {
     const selectedText = editor.state.doc.textBetween(
@@ -275,6 +286,9 @@ function EditorExtensions({ editor }: { editor: any }) {
               }`}
             >
               <Highlighter size={15} />
+            </button>
+            <button onClick={save}>
+              <SaveIcon size={18} />
             </button>
             <button
               onClick={(e) => process()}

@@ -27,7 +27,7 @@ export default function Workspace() {
   }, [fileInfo]);
   return (
     <div className="h-screen flex flex-col">
-      <Header fileInfo={fileInfo} editor={editorInstance} />
+      <Header fileInfo={fileInfo} />
 
       <div className="grid grid-cols-2 pr-2 flex-1 overflow-hidden">
         <div className="overflow-auto">

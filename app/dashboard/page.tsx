@@ -28,6 +28,9 @@ export default function Dashboard() {
   const { toast } = useToast();
   const { user } = useUser();
   const router = useRouter();
+  const userInfo = useQuery(api.user.getUserInfo, {
+    userEmail: user?.primaryEmailAddress?.emailAddress ?? "",
+  });
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedFile, setSelectedFile] = useState<{
     fileId: string;
@@ -87,7 +90,6 @@ export default function Dashboard() {
   const CheckUser = async () => {
     try {
       const result = await createUser({
-        id: user?.id ?? "",
         email: user?.primaryEmailAddress?.emailAddress ?? "",
         imageUrl: user?.imageUrl ?? "",
         userName: user?.fullName ?? "",
@@ -130,7 +132,9 @@ export default function Dashboard() {
           <div>
             {fileList && (
               <UploadPdfDialog
-                HasReachedLimit={fileList?.length >= 5 ? true : false}
+                HasReachedLimit={
+                  fileList?.length >= 5 && !userInfo?.isProUser ? true : false
+                }
               />
             )}
           </div>
