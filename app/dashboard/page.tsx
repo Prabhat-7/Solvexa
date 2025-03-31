@@ -58,6 +58,20 @@ export default function Dashboard() {
         ),
         variant: "success",
       });
+      setTimeout(() => {
+        // Create a new URLSearchParams object without the payment parameter
+        const newSearchParams = new URLSearchParams(searchParams);
+        newSearchParams.delete("payment");
+
+        // Update the URL without causing a page reload
+        window.history.replaceState(
+          null,
+          "",
+          `${window.location.pathname}${
+            newSearchParams.toString() ? `?${newSearchParams}` : ""
+          }`
+        );
+      }, 2000);
     } else if (searchParams.get("payment") == null) {
       return;
     } else {
@@ -84,6 +98,20 @@ export default function Dashboard() {
           </ToastAction>
         ),
       });
+      setTimeout(() => {
+        // Create a new URLSearchParams object without the payment parameter
+        const newSearchParams = new URLSearchParams(searchParams);
+        newSearchParams.delete("payment");
+
+        // Update the URL without causing a page reload
+        window.history.replaceState(
+          null,
+          "",
+          `${window.location.pathname}${
+            newSearchParams.toString() ? `?${newSearchParams}` : ""
+          }`
+        );
+      }, 2000);
     }
   }, []);
 
@@ -203,11 +231,11 @@ export default function Dashboard() {
           <DialogContent>
             <DialogHeader>
               <DialogTitle className="text-xl">Open Document</DialogTitle>
-              <DialogDescription className="pt-2">
-                <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-md">
+              <DialogDescription className="pt-2" asChild>
+                <span className="flex items-center gap-3 p-3 bg-gray-50 rounded-md">
                   <FileText className="text-blue-500" size={24} />
                   <span className="font-medium">{selectedFile?.fileName}</span>
-                </div>
+                </span>
               </DialogDescription>
             </DialogHeader>
             <DialogFooter className="gap-2 sm:gap-0">

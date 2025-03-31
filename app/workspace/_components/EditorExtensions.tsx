@@ -1,5 +1,8 @@
 "use client";
 import { sendMessageWithFallback } from "@/configs/AiModel";
+import { jsPDF } from "jspdf";
+import html2canvas from "html2canvas";
+import { saveAs } from "file-saver";
 import { api } from "@/convex/_generated/api";
 import { useUser } from "@clerk/nextjs";
 import { useAction, useMutation } from "convex/react";
@@ -9,6 +12,7 @@ import {
   AlignLeft,
   AlignRight,
   Bold,
+  Download,
   Heading1,
   Heading2,
   Heading3,
@@ -66,9 +70,49 @@ function EditorExtensions({ editor }: { editor: any }) {
       fileId: fileId,
       createdBy: user?.primaryEmailAddress?.emailAddress ?? "",
     });
-   
   };
 
+  // First install these dependencies:
+  // pnpm add jspdf html2canvas file-saver @types/file-saver
+
+  // PDF download function
+  const downloadAsPDF = async () => {
+    if (!editor) return;
+
+    // Get the editor's DOM element
+    const editorElement = document.querySelector(
+      ".ProseMirror"
+    ) as HTMLElement | null;
+    if (!editorElement) return;
+
+    try {
+      // Create a canvas from the editor content
+      const canvas = await html2canvas(editorElement, { scale: 3 });
+
+      // Initialize PDF document
+      const pdf = new jsPDF("p", "mm", "a4");
+      const imgData = canvas.toDataURL("image/png");
+      const imgWidth = 210; // A4 width in mm
+      const imgHeight = (canvas.height * imgWidth) / canvas.width;
+
+      pdf.addImage(imgData, "PNG", 0, 0, imgWidth, imgHeight);
+      pdf.save("notes.pdf");
+    } catch (error) {
+      console.error("Error creating PDF:", error);
+    }
+  };
+
+  // Simple plain text download function (as fallback for DOCX)
+  const downloadAsText = () => {
+    if (!editor) return;
+
+    // Get plain text content
+    const textContent = editor.getText();
+
+    // Create a Blob with the text content
+    const blob = new Blob([textContent], { type: "text/plain;charset=utf-8" });
+    saveAs(blob, "notes.txt");
+  };
   const process = async () => {
     const selectedText = editor.state.doc.textBetween(
       editor.state.selection.from,
@@ -289,6 +333,12 @@ function EditorExtensions({ editor }: { editor: any }) {
             <button onClick={save}>
               <SaveIcon size={18} />
             </button>
+            <button
+              onClick={downloadAsPDF}
+              className={`w-8 h-8 flex items-center justify-center ml-3 rounded-sm hover:bg-slate-200`}
+            >
+              <Download />
+            </button>{" "}
             <button
               onClick={(e) => process()}
               className={`w-8 h-8 flex items-center justify-center ml-3 rounded-sm hover:bg-slate-200`}
