@@ -1,8 +1,17 @@
 "use client";
 import React from "react";
 import PricingComponents from "../_components/pricingComponents";
-import { Sparkles } from "lucide-react";
+import { ArrowRight, CheckCircle2, Sparkles } from "lucide-react";
+import { useUser } from "@clerk/nextjs";
+import { useQuery } from "convex/react";
+import { api } from "@/convex/_generated/api";
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
 function UpgradePlans() {
+  const { user } = useUser();
+  const userInfo = useQuery(api.user.getUserInfo, {
+    userEmail: user?.primaryEmailAddress?.emailAddress ?? "",
+  });
   const handlePayment = async () => {
     const formData = {
       return_url: "http://localhost:3000/checkout",
@@ -37,6 +46,53 @@ function UpgradePlans() {
       console.error("Error initiating payment:", err);
     }
   };
+
+  if (userInfo?.isProUser) {
+    return (
+      <div className="min-h-screen bg-gray-50">
+        <div className="max-w-4xl mx-auto p-6 sm:p-10">
+          <div className="bg-white rounded-2xl shadow-xl p-8 border border-gray-100">
+            <div className="text-center mb-8">
+              <div className="inline-flex items-center justify-center gap-2 bg-green-50 text-green-700 px-4 py-1.5 rounded-full text-sm font-medium mb-4">
+                <CheckCircle2 size={16} className="text-green-600" />
+                <span>Pro Plan Active</span>
+              </div>
+              <h1 className="text-3xl font-bold text-gray-900 mb-4">
+                Welcome to Pro Experience
+              </h1>
+              <p className="text-gray-600">
+                You're enjoying all premium features and unlimited access
+              </p>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+              <div className="bg-gray-50 rounded-xl p-6">
+                <h3 className="font-semibold text-gray-900 mb-2">
+                  Current Usage
+                </h3>
+                <p className="text-gray-600">Unlimited PDF uploads available</p>
+              </div>
+              <div className="bg-gray-50 rounded-xl p-6">
+                <h3 className="font-semibold text-gray-900 mb-2">
+                  Plan Status
+                </h3>
+                <p className="text-gray-600">Pro Plan - Active</p>
+              </div>
+            </div>
+
+            <div className="text-center">
+              <Link href="/dashboard">
+                <Button className="inline-flex items-center gap-2">
+                  Go to Dashboard
+                  <ArrowRight size={16} />
+                </Button>
+              </Link>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -92,7 +148,7 @@ function UpgradePlans() {
             ].map((feature, index) => (
               <div
                 key={index}
-                className="bg-white p-6 rounded-xl shadow-sm border border-gray-100"
+                className="bg-white p-6 rounded-xl shadow-sm border border-gray-100 hover:shadow-md transition-shadow duration-200"
               >
                 <h3 className="text-lg font-semibold text-gray-900 mb-2">
                   {feature.title}

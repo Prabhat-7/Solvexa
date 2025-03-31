@@ -1,7 +1,6 @@
 "use client";
 import { sendMessageWithFallback } from "@/configs/AiModel";
 import { api } from "@/convex/_generated/api";
-import { useToast } from "@/hooks/use-toast";
 import { useUser } from "@clerk/nextjs";
 import { useAction, useMutation } from "convex/react";
 import {
@@ -57,7 +56,6 @@ const highlightStyles = `
 `;
 
 function EditorExtensions({ editor }: { editor: any }) {
-  const { toast } = useToast();
   const { fileId }: { fileId: string } = useParams();
   const { user } = useUser();
   const search = useAction(api.myAction.search);
@@ -68,6 +66,7 @@ function EditorExtensions({ editor }: { editor: any }) {
       fileId: fileId,
       createdBy: user?.primaryEmailAddress?.emailAddress ?? "",
     });
+   
   };
 
   const process = async () => {
